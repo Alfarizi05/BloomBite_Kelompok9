@@ -58,9 +58,9 @@ export default function Navbar({ isScrolled }) {
         <ul className="hidden md:flex gap-6 text-white items-center font-medium absolute left-1/2 transform -translate-x-1/2">
           <li><a href="#hero" className="hover:text-yellow-400">Beranda</a></li>
           <li><a href="#about" className="hover:text-yellow-400">Tentang</a></li>
-          <li><a href="#produk" className="hover:text-yellow-400">Menu</a></li>
+          <li><a href="#produk" className="hover:text-yellow-400">Produk</a></li>
           <li><a href="#testimoni" className="hover:text-yellow-400">Testimoni</a></li>
-          <li><a href="#cek-member" className="hover:text-yellow-400">Cek Member</a></li>
+          <li><a href="#cek-member" className="hover:text-yellow-400">Tim Kami</a></li>
         </ul>
 
         {/* Search + Auth */}
