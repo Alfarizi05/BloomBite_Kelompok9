@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
 
 export default function Produk() {
   const [products, setProducts] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [error, setError] = useState(null);
 
   const PRODUCTS_PER_SLIDE = 8;
@@ -15,16 +15,6 @@ export default function Produk() {
       .then((data) => setProducts(data.products))
       .catch(() => setError("Gagal mengambil data produk"));
   }, []);
-
-  // Auto-slide (opsional)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) =>
-        prev === Math.floor(products.length / PRODUCTS_PER_SLIDE) - 1 ? 0 : prev + 1
-      );
-    }, 7000); // Setiap 7 detik
-    return () => clearInterval(interval);
-  }, [products]);
 
   const handlePrev = () => {
     setCurrentSlide((prev) =>
@@ -38,10 +28,10 @@ export default function Produk() {
     );
   };
 
-  if (error) return <div className="text-red-600 p-4">{error}</div>;
-
   const startIndex = currentSlide * PRODUCTS_PER_SLIDE;
   const currentProducts = products.slice(startIndex, startIndex + PRODUCTS_PER_SLIDE);
+
+  if (error) return <div className="text-red-600 p-4">{error}</div>;
 
   return (
     <section id="produk" className="scroll-mt-20 p-8 bg-black text-white overflow-hidden">
@@ -65,6 +55,7 @@ export default function Produk() {
         </button>
       </div>
 
+      {/* Grid Produk */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
@@ -77,25 +68,24 @@ export default function Produk() {
           {currentProducts.map((product) => (
             <div
               key={product.id}
-              className="bg-white text-black rounded-lg border-2 border-yellow-400 shadow-lg p-4 text-center hover:scale-105 transition-transform duration-300"
+              onClick={() => setSelectedProduct(product)}
+              className="bg-white text-black rounded-lg border-2 border-yellow-400 shadow-lg p-4 text-center hover:scale-105 transition-transform duration-300 cursor-pointer"
             >
-              <Link to={`/produk/${product.id}`}>
-                <img
-                  src={product.thumbnail}
-                  alt={product.title}
-                  className="w-full h-40 object-cover rounded"
-                />
-                <h3 className="mt-3 font-semibold text-lg">{product.title}</h3>
-                <p className="text-yellow-500 font-bold mt-1">
-                  Rp {(product.price * 1000).toLocaleString()}
-                </p>
-              </Link>
+              <img
+                src={product.thumbnail}
+                alt={product.title}
+                className="w-full h-40 object-cover rounded"
+              />
+              <h3 className="mt-3 font-semibold text-lg">{product.title}</h3>
+              <p className="text-yellow-500 font-bold mt-1">
+                Rp {(product.price * 1000).toLocaleString()}
+              </p>
             </div>
           ))}
         </motion.div>
       </AnimatePresence>
 
-      {/* Indicator Slide */}
+      {/* Indicator */}
       <div className="flex justify-center gap-2 mt-6">
         {Array.from({ length: Math.ceil(products.length / PRODUCTS_PER_SLIDE) }).map(
           (_, index) => (
@@ -109,6 +99,32 @@ export default function Produk() {
           )
         )}
       </div>
+
+      {/* Modal Detail Produk */}
+      {selectedProduct && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-white text-black rounded-xl p-6 max-w-md w-full shadow-xl relative">
+            <button
+              onClick={() => setSelectedProduct(null)}
+              className="absolute top-2 right-3 text-gray-600 hover:text-black text-2xl"
+            >
+              ×
+            </button>
+            <img
+              src={selectedProduct.thumbnail}
+              alt={selectedProduct.title}
+              className="w-full h-48 object-cover rounded mb-4"
+            />
+            <h2 className="text-2xl font-bold mb-2">{selectedProduct.title}</h2>
+            <p className="text-gray-600 mb-1">Kategori: {selectedProduct.category}</p>
+            <p className="text-gray-600 mb-1">Brand: {selectedProduct.brand}</p>
+            <p className="text-gray-800 mt-2 mb-3">{selectedProduct.description}</p>
+            <p className="text-yellow-500 font-bold text-lg">
+              Harga: Rp {(selectedProduct.price * 1000).toLocaleString()}
+            </p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
