@@ -1,3 +1,6 @@
+import { IoIosArrowBack } from "react-icons/io"; 
+import { IoIosArrowForward } from "react-icons/io"; 
+import { BiRightArrow } from "react-icons/bi";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -43,15 +46,15 @@ export default function Produk() {
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={handlePrev}
-          className="text-yellow-400 border border-yellow-400 px-4 py-2 rounded hover:bg-yellow-500 hover:text-black transition"
+          className="flex items-center gap-2 text-yellow-400 border border-yellow-400 px-4 py-2 rounded hover:bg-yellow-500 hover:text-black transition"
         >
-          ◀ Sebelumnya
+          <IoIosArrowBack /> Sebelumnya
         </button>
         <button
           onClick={handleNext}
-          className="text-yellow-400 border border-yellow-400 px-4 py-2 rounded hover:bg-yellow-500 hover:text-black transition"
+          className="flex items-center gap-2 text-yellow-400 border border-yellow-400 px-4 py-2 rounded hover:bg-yellow-500 hover:text-black transition"
         >
-          Berikutnya ▶
+          Berikutnya <IoIosArrowForward />
         </button>
       </div>
 
@@ -92,9 +95,8 @@ export default function Produk() {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`h-2 w-2 rounded-full transition ${
-                index === currentSlide ? "bg-yellow-400" : "bg-gray-500"
-              }`}
+              className={`h-2 w-2 rounded-full transition ${index === currentSlide ? "bg-yellow-400" : "bg-gray-500"
+                }`}
             />
           )
         )}

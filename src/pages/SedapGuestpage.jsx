@@ -27,7 +27,7 @@ export default function SedapGuestPage() {
       {/* Overlay agar konten tetap terbaca */}
       <div className="bg-white-400 bg-opacity-80 min-h-screen" style={{ backgroundImage: "url('/img/black.jpg')" }}>
         <Navbar isScrolled={isScrolled} />
-        <main className="pt-20">
+        <main className="pt-28">
           <Hero />
           <About />
           <Produk />

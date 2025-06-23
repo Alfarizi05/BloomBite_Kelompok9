@@ -12,13 +12,13 @@ const member = [
     nama: "Sekar Mutiara Mufthi ",
     jurusan: "Teknik Informatika",
     deskripsi: "UI/UX designer yang antusias menciptakan pengalaman pengguna yang intuitif dan menarik.",
-    foto: "/img/aisyah.jpg"
+    foto: "/img/woman.png"
   },
   {
     nama: "M. Haikal Rayadi",
     jurusan: "Teknik Informatika",
     deskripsi: "Backend developer dengan spesialisasi dalam pengelolaan API dan keamanan data.",
-    foto: "/img/budi.jpg"
+    foto: "/img/man.png"
   }
 ];
 
@@ -35,46 +35,25 @@ export default function CekMember() {
   }, []);
 
   return (
-    <section id="cek-member" className="scroll-mt-20 py-12 px-6 bg-black text-white overflow-hidden">
-      <h2 className="text-3xl font-bold text-center text-yellow-400 mb-10">Our Team</h2>
+  <section id="cek-member" className="scroll-mt-20 py-16 px-6 bg-black text-white">
+      <h2 className="text-3xl font-bold text-center text-yellow-400 mb-12">Our Team</h2>
 
-      <div className="max-w-6xl mx-auto">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSlide}
-            initial={{ opacity: 0, x: -100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-col md:flex-row items-center gap-8"
+      <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {member.map((item, index) => (
+          <div
+            key={index}
+            className="bg-white rounded-xl shadow-md text-center p-6 hover:shadow-lg transition duration-300"
           >
             <img
-              src={member[currentSlide].foto}
-              alt={member[currentSlide].nama}
-              className="w-full md:w-1/2 rounded-xl shadow-xl object-cover h-[400px]"
+              src={item.foto}
+              alt={item.nama}
+              className="w-24 h-24 object-cover mx-auto mb-4 rounded-full border-4 border-yellow-400"
             />
-            <div className="md:w-1/2 text-center md:text-left">
-              <h3 className="text-2xl font-bold text-yellow-400 mb-2">
-                {member[currentSlide].nama}
-              </h3>
-              <p className="text-gray-300 italic mb-2">{member[currentSlide].jurusan}</p>
-              <p className="text-gray-200">{member[currentSlide].deskripsi}</p>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Indicator */}
-        <div className="flex justify-center gap-2 mt-6">
-          {member.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`h-2 w-2 rounded-full transition duration-300 ${
-                index === currentSlide ? "bg-yellow-400" : "bg-gray-500"
-              }`}
-            ></button>
-          ))}
-        </div>
+            <h3 className="text-lg font-bold text-gray-800">{item.nama}</h3>
+            <p className="text-sm text-gray-500 italic">{item.jurusan}</p>
+            <p className="text-gray-700 mt-2 text-sm">{item.deskripsi}</p>
+          </div>
+        ))}
       </div>
     </section>
   );

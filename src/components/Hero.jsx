@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function Hero() {
   const [randomProducts, setRandomProducts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Ambil data produk dan pilih 3 secara acak
   useEffect(() => {
     fetch("https://dummyjson.com/products?limit=24")
       .then((res) => res.json())
@@ -16,13 +16,12 @@ export default function Hero() {
       .catch((err) => console.error("Gagal memuat produk:", err));
   }, []);
 
-  // Slideshow otomatis
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) =>
         prev === randomProducts.length - 1 ? 0 : prev + 1
       );
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [randomProducts]);
@@ -40,8 +39,16 @@ export default function Hero() {
     >
       <div className="absolute inset-0 bg-[url('/images/bg-pattern.png')] bg-cover opacity-5 pointer-events-none" />
       <div className="relative z-10 flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto">
-        {/* Kiri */}
-        <div className="md:w-1/2">
+        
+        {/* Kiri (konten teks) */}
+        <motion.div
+          key={currentIndex + "-text"}
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 40 }}
+          transition={{ duration: 0.6 }}
+          className="md:w-1/2"
+        >
           <h2 className="text-yellow-400 text-lg font-semibold mb-2 uppercase tracking-wider">
             Promo Spesial
           </h2>
@@ -72,17 +79,23 @@ export default function Hero() {
               <span className="text-sm text-gray-300">Rating Tokopedia</span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Kanan (Slideshow Gambar Produk) */}
-        <div className="md:w-1/2 flex justify-center mb-8 md:mb-0 relative">
-          <img
-            src={currentProduct.thumbnail}
-            alt={currentProduct.title}
-            className="w-full max-w-md rounded-xl shadow-xl transition-opacity duration-700 ease-in-out"
-            key={currentIndex}
-          />
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+        {/* Kanan (Gambar produk) */}
+        <div className="md:w-1/2 flex justify-center mb-8 md:mb-0 relative h-[400px]">
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentProduct.thumbnail}
+              src={currentProduct.thumbnail}
+              alt={currentProduct.title}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ duration: 0.6 }}
+              className="w-full max-w-md rounded-xl shadow-xl object-cover absolute"
+            />
+          </AnimatePresence>
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
             {randomProducts.map((_, index) => (
               <span
                 key={index}
