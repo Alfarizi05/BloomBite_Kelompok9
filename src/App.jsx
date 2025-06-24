@@ -3,37 +3,18 @@ import "./assets/tailwind.css";
 import React, { Suspense } from "react";
 
 // Lazy loading of components
-const Dashboard = React.lazy(() => import("./pages/Dashboard"));
-const Customers = React.lazy(() => import("./pages/Customers"));
-const Orders = React.lazy(() => import("./pages/Orders"));
-const UserPage = React.lazy(() => import("./pages/UserPage"));
 const ErrorPage = React.lazy(() => import("./components/ErrorPage"));
-const MainLayout = React.lazy(() => import("./layouts/MainLayout"));
 const AuthLayout = React.lazy(() => import("./layouts/AuthLayout"));
 const Login = React.lazy(() => import("./pages/auth/Login"));
 const Register = React.lazy(() => import("./pages/auth/Register"));
 const Forgot = React.lazy(() => import("./pages/auth/Forgot"));
 const Loading = React.lazy(() => import("./components/Loading"));
-const SedapGuestPage = React.lazy(() => import("./pages/SedapGuestpage"));
-const Products = React.lazy(() => import("./pages/Products"));
-const ProductDetail = React.lazy(() => import("./pages/ProductDetail"));
-const Notes = React.lazy(() => import("./pages/Notes"));
+const HomePage = React.lazy(() => import("./pages/HomePage"));
 
 export default function App() {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
-        {/* Main layout for regular routes */}
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/users" element={<UserPage />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/notes" element={<Notes />} />
-          <Route path="/products/:id" element={<ProductDetail />} />
-        </Route>
-
         {/* Auth layout for authentication pages */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
@@ -42,7 +23,7 @@ export default function App() {
         </Route>
 
         {/* Guest Page Route */}
-        <Route path="/guest" element={<SedapGuestPage />} />
+        <Route path="/" element={<HomePage />} />
 
         {/* Error Routes */}
         <Route
