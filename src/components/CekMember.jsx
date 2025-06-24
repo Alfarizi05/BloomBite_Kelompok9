@@ -18,7 +18,7 @@ const member = [
     nama: "M. Haikal Rayadi",
     jurusan: "Teknik Informatika",
     deskripsi: "Backend developer dengan spesialisasi dalam pengelolaan API dan keamanan data.",
-    foto: "/img/man.png"
+    foto: "/img/haikal.jpg"
   }
 ];
 
