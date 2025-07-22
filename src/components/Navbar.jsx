@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
 
 export default function Navbar({ isScrolled }) {
   const [searchText, setSearchText] = useState("");
@@ -6,8 +8,30 @@ export default function Navbar({ isScrolled }) {
   const [allProducts, setAllProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
 
-  // Fetch all products
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      setIsLoggedIn(true);
+      setUserName(user.name || user.username || "User");
+    } else {
+      setIsLoggedIn(false);
+      setUserName("");
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
+    setIsLoggedIn(false);
+    setUserName("");
+    navigate("/login");
+  };
+
   useEffect(() => {
     fetch("https://dummyjson.com/products?limit=100")
       .then((res) => res.json())
@@ -15,7 +39,6 @@ export default function Navbar({ isScrolled }) {
       .catch((err) => console.error("Gagal mengambil produk:", err));
   }, []);
 
-  // Filter suggestion
   useEffect(() => {
     if (searchText.length >= 1) {
       const filtered = allProducts.filter((product) =>
@@ -27,7 +50,6 @@ export default function Navbar({ isScrolled }) {
     }
   }, [searchText, allProducts]);
 
-  // Fetch detail for selected product
   const handleSelect = (id) => {
     fetch(`https://dummyjson.com/products/${id}`)
       .then((res) => res.json())
@@ -88,65 +110,67 @@ export default function Navbar({ isScrolled }) {
             )}
           </div>
 
-          <a
-            href="/login"
-            className="bg-yellow-400 text-black px-4 py-2 rounded-lg hover:bg-yellow-500 transition"
-          >
-            Login
-          </a>
-          <a
-            href="/register"
-            className="border border-yellow-400 text-yellow-400 px-4 py-2 rounded-lg hover:bg-yellow-400 hover:text-black transition"
-          >
-            Register
-          </a>
+          {isLoggedIn ? (
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 text-white bg-gray-800 px-3 py-2 rounded-lg">
+                <FaUserCircle className="text-xl" />
+                <span className="text-sm">{userName}</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="bg-yellow-400 text-black px-4 py-2 rounded-lg hover:bg-yellow-500 transition"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <a
+              href="/login"
+              className="bg-yellow-400 text-black px-4 py-2 rounded-lg hover:bg-yellow-500 transition"
+            >
+              Login
+            </a>
+          )}
         </div>
       </nav>
 
       {/* Modal Produk */}
       {showModal && selectedProduct && (
-  <div
-    className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center"
-    onClick={() => setShowModal(false)}
-  >
-    <div
-      className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-md relative"
-      onClick={(e) => e.stopPropagation()}
-    >
-      {/* Tombol X */}
-      <button
-        className="absolute top-3 right-4 text-xl font-bold text-gray-500 hover:text-red-500"
-        onClick={() => setShowModal(false)}
-      >
-        ✕
-      </button>
-
-      {/* Gambar Produk */}
-      <img
-        src={selectedProduct.thumbnail}
-        alt={selectedProduct.title}
-        className="rounded-xl mb-4 w-full h-48 object-cover"
-      />
-
-      {/* Konten */}
-      <h2 className="text-2xl font-bold text-gray-800 mb-2">
-        {selectedProduct.title}
-      </h2>
-      <p className="text-sm text-gray-600 mb-1">
-        <span className="font-semibold">Kategori:</span> {selectedProduct.category}
-      </p>
-      <p className="text-sm text-gray-600 mb-3">
-        <span className="font-semibold">Brand:</span> {selectedProduct.brand}
-      </p>
-      <p className="text-sm text-gray-700 mb-4">
-        {selectedProduct.description}
-      </p>
-      <p className="text-lg font-bold text-yellow-500">
-        Harga: Rp {Number(selectedProduct.price * 1000).toLocaleString()}
-      </p>
-    </div>
-  </div>
-)}
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center"
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-md relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-3 right-4 text-xl font-bold text-gray-500 hover:text-red-500"
+              onClick={() => setShowModal(false)}
+            >
+              ✕
+            </button>
+            <img
+              src={selectedProduct.thumbnail}
+              alt={selectedProduct.title}
+              className="rounded-xl mb-4 w-full h-48 object-cover"
+            />
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              {selectedProduct.title}
+            </h2>
+            <p className="text-sm text-gray-600 mb-1">
+              <span className="font-semibold">Kategori:</span> {selectedProduct.category}
+            </p>
+            <p className="text-sm text-gray-600 mb-3">
+              <span className="font-semibold">Brand:</span> {selectedProduct.brand}
+            </p>
+            <p className="text-sm text-gray-700 mb-4">{selectedProduct.description}</p>
+            <p className="text-lg font-bold text-yellow-500">
+              Harga: Rp {Number(selectedProduct.price * 1000).toLocaleString()}
+            </p>
+          </div>
+        </div>
+      )}
     </>
   );
 }

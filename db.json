@@ -1,0 +1,58 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "haikal",
+      "password": "haikal",
+      "role": "admin"
+    },
+    {
+      "id": "2",
+      "username": "user1",
+      "password": "user123",
+      "role": "user"
+    },
+    {
+      "id": "3",
+      "username": "user2",
+      "password": "user456",
+      "role": "user"
+    },
+    {
+      "id": "2fcb",
+      "username": "alfarizi",
+      "password": "alfarizi",
+      "role": "admin"
+    },
+    {
+      "id": "0263b280-f3b1-4cf0-80ce-d6a111b74f1a",
+      "username": "userdummy1",
+      "password": "userdummy1",
+      "role": "user"
+    },
+    {
+      "id": "900197ba-dd82-4358-8085-5b432185c6b6",
+      "username": "userdummy2",
+      "password": "userdummy2",
+      "role": "user"
+    },
+    {
+      "id": "29d66d18-d8e9-4121-adfb-f0c57497cfb9",
+      "username": "userdummy3",
+      "password": "userdummy3",
+      "role": "user"
+    },
+    {
+      "id": "3fc99f71-9942-4c86-a299-88c2272bdd54",
+      "username": "sekar",
+      "password": "sekar",
+      "role": "admin"
+    },
+    {
+      "id": "9247d23f-fd2f-487f-b318-6b07755d66c7",
+      "username": "alfarizi",
+      "password": "alfarizi",
+      "role": "admin"
+    }
+  ]
+}

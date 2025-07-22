@@ -1,39 +1,53 @@
+import { Link } from "react-router-dom";
+
 export default function Forgot() {
     return (
-        <div>
-            <h2 className="text-2xl font-semibold text-gray-700 mb-2 text-center">
+        <div className="bg-white shadow-lg border border-gray-200 rounded-2xl p-8 grid gap-6">
+            {/* Logo */}
+            <div className="flex justify-center">
+                <img src="/public/img/logo.png" className="h-30 w-30" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-800 text-center">
                 Forgot Your Password?
             </h2>
-            
-            <p className="text-sm text-gray-500 mb-6 text-center">
-                Enter your email address and we'll send you a link to reset your
-                password.
+
+            <p className="text-sm text-gray-500 text-center">
+                Masukkan alamat email Anda dan kami akan mengirimkan tautan untuk
+                mengatur ulang password Anda.
             </p>
 
-            <form>
-                <div className="mb-5">
-                    <label
-                        htmlFor="email"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                        Email Address
-                    </label>
+            <form className="grid gap-4">
+                <div>
                     <input
                         type="email"
                         id="email"
-                        className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm
-                            placeholder-gray-400"
                         placeholder="you@example.com"
+                        className="w-full bg-gray-100 rounded-full px-5 py-3 text-sm outline-none focus:ring-2 focus:ring-black"
+                        required
                     />
                 </div>
                 <button
                     type="submit"
-                    className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4
-                        rounded-lg transition duration-300"
+                    className="w-full bg-black text-white font-semibold py-3 rounded-full transition duration-300 transform hover:bg-gray-800 hover:scale-105"
                 >
-                    Send Reset Link
+                    Kirim Link Reset
                 </button>
             </form>
+
+            {/* Tambahan link navigasi */}
+            <div className="text-sm text-center text-gray-500 mt-4">
+                Sudah punya akun?{" "}
+                <Link to="/login" className="text-black underline">
+                    Login di sini
+                </Link>
+                <br />
+                <span className="text-xs">
+                    Belum punya akun?{" "}
+                    <Link to="/register" className="text-black underline">
+                        Daftar di sini
+                    </Link>
+                </span>
+            </div>
         </div>
-    )
+    );
 }
