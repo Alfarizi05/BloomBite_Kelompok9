@@ -15,14 +15,8 @@
     {
       "id": "3",
       "username": "user2",
-      "password": "user456",
+      "password": "user2",
       "role": "user"
-    },
-    {
-      "id": "2fcb",
-      "username": "alfarizi",
-      "password": "alfarizi",
-      "role": "admin"
     },
     {
       "id": "0263b280-f3b1-4cf0-80ce-d6a111b74f1a",
@@ -53,6 +47,12 @@
       "username": "alfarizi",
       "password": "alfarizi",
       "role": "admin"
+    },
+    {
+      "id": "316a",
+      "username": "userdummy4",
+      "password": "userdummy4",
+      "role": "user"
     }
   ]
 }

@@ -1,8 +1,7 @@
-import { IoIosArrowBack } from "react-icons/io"; 
-import { IoIosArrowForward } from "react-icons/io"; 
-import { BiRightArrow } from "react-icons/bi";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { productAPI } from "../services/productAPI";
 
 export default function Produk() {
   const [products, setProducts] = useState([]);
@@ -13,9 +12,9 @@ export default function Produk() {
   const PRODUCTS_PER_SLIDE = 8;
 
   useEffect(() => {
-    fetch("https://dummyjson.com/products?limit=24")
-      .then((res) => res.json())
-      .then((data) => setProducts(data.products))
+    productAPI
+      .fetchProducts()
+      .then((data) => setProducts(data))
       .catch(() => setError("Gagal mengambil data produk"));
   }, []);
 
@@ -75,13 +74,13 @@ export default function Produk() {
               className="bg-white text-black rounded-lg border-2 border-yellow-400 shadow-lg p-4 text-center hover:scale-105 transition-transform duration-300 cursor-pointer"
             >
               <img
-                src={product.thumbnail}
-                alt={product.title}
+                src={product.gambar || "/img/logo.png"}
+                alt={product.nama}
                 className="w-full h-40 object-cover rounded"
               />
-              <h3 className="mt-3 font-semibold text-lg">{product.title}</h3>
+              <h3 className="mt-3 font-semibold text-lg">{product.nama}</h3>
               <p className="text-yellow-500 font-bold mt-1">
-                Rp {(product.price * 1000).toLocaleString()}
+                Rp {product.harga?.toLocaleString()}
               </p>
             </div>
           ))}
@@ -95,8 +94,9 @@ export default function Produk() {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`h-2 w-2 rounded-full transition ${index === currentSlide ? "bg-yellow-400" : "bg-gray-500"
-                }`}
+              className={`h-2 w-2 rounded-full transition ${
+                index === currentSlide ? "bg-yellow-400" : "bg-gray-500"
+              }`}
             />
           )
         )}
@@ -113,17 +113,16 @@ export default function Produk() {
               ×
             </button>
             <img
-              src={selectedProduct.thumbnail}
-              alt={selectedProduct.title}
+              src={selectedProduct.gambar || "/img/logo.png"}
+              alt={selectedProduct.nama}
               className="w-full h-48 object-cover rounded mb-4"
             />
-            <h2 className="text-2xl font-bold mb-2">{selectedProduct.title}</h2>
-            <p className="text-gray-600 mb-1">Kategori: {selectedProduct.category}</p>
-            <p className="text-gray-600 mb-1">Brand: {selectedProduct.brand}</p>
-            <p className="text-gray-800 mt-2 mb-3">{selectedProduct.description}</p>
+            <h2 className="text-2xl font-bold mb-2">{selectedProduct.nama}</h2>
+            <p className="text-gray-800 mt-2 mb-3">{selectedProduct.deskripsi}</p>
             <p className="text-yellow-500 font-bold text-lg">
-              Harga: Rp {(selectedProduct.price * 1000).toLocaleString()}
+              Harga: Rp {selectedProduct.harga?.toLocaleString()}
             </p>
+            <p className="text-gray-600">Stok: {selectedProduct.stok}</p>
           </div>
         </div>
       )}
