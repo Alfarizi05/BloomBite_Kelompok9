@@ -49,15 +49,9 @@
       "role": "admin"
     },
     {
-<<<<<<< HEAD
-      "id": "0e39",
-      "username": "Alfarizi1",
-      "password": "Alfarizi",
-=======
       "id": "316a",
       "username": "userdummy4",
       "password": "userdummy4",
->>>>>>> 2cf281eb1ad5432ffe7bcf46e2528d563d2eefc8
       "role": "user"
     }
   ]
