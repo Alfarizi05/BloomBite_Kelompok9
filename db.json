@@ -53,6 +53,12 @@
       "username": "alfarizi",
       "password": "alfarizi",
       "role": "admin"
+    },
+    {
+      "id": "0e39",
+      "username": "Alfarizi1",
+      "password": "Alfarizi",
+      "role": "user"
     }
   ]
 }
