@@ -15,14 +15,8 @@
     {
       "id": "3",
       "username": "user2",
-      "password": "user456",
+      "password": "user2",
       "role": "user"
-    },
-    {
-      "id": "2fcb",
-      "username": "alfarizi",
-      "password": "alfarizi",
-      "role": "admin"
     },
     {
       "id": "0263b280-f3b1-4cf0-80ce-d6a111b74f1a",
@@ -55,9 +49,15 @@
       "role": "admin"
     },
     {
+<<<<<<< HEAD
       "id": "0e39",
       "username": "Alfarizi1",
       "password": "Alfarizi",
+=======
+      "id": "316a",
+      "username": "userdummy4",
+      "password": "userdummy4",
+>>>>>>> 2cf281eb1ad5432ffe7bcf46e2528d563d2eefc8
       "role": "user"
     }
   ]
