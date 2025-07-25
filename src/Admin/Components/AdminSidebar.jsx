@@ -95,6 +95,6 @@ export default function AdminSidebar() {
       <div className="p-4">
         <div className="text-sm text-gray-400 text-center">© 2025 Bloom&Bite</div>
       </div>
-    </div>
-  );
+    </div>
+  );
 }

@@ -53,6 +53,12 @@
       "username": "userdummy4",
       "password": "userdummy4",
       "role": "user"
+    },
+    {
+      "id": "aaec",
+      "username": "izi",
+      "password": "izi",
+      "role": "user"
     }
   ]
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import { productAPI } from "../services/productAPI"; // sesuaikan path jika perlu
 
 export default function Navbar({ isScrolled }) {
   const [searchText, setSearchText] = useState("");
@@ -32,17 +33,18 @@ export default function Navbar({ isScrolled }) {
     navigate("/login");
   };
 
+  // Ambil produk dari backend
   useEffect(() => {
-    fetch("https://dummyjson.com/products?limit=100")
-      .then((res) => res.json())
-      .then((data) => setAllProducts(data.products))
+    productAPI.fetchProducts()
+      .then((data) => setAllProducts(data))
       .catch((err) => console.error("Gagal mengambil produk:", err));
   }, []);
 
+  // Filter berdasarkan pencarian
   useEffect(() => {
     if (searchText.length >= 1) {
       const filtered = allProducts.filter((product) =>
-        product.title.toLowerCase().includes(searchText.toLowerCase())
+        product.nama.toLowerCase().includes(searchText.toLowerCase())
       );
       setSuggestions(filtered.slice(0, 5));
     } else {
@@ -51,32 +53,29 @@ export default function Navbar({ isScrolled }) {
   }, [searchText, allProducts]);
 
   const handleSelect = (id) => {
-    fetch(`https://dummyjson.com/products/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setSelectedProduct(data);
-        setShowModal(true);
-        setSearchText("");
-        setSuggestions([]);
-      })
-      .catch(() => alert("Gagal memuat detail produk"));
+    const selected = allProducts.find((item) => item.id === id);
+    if (selected) {
+      setSelectedProduct(selected);
+      setShowModal(true);
+      setSearchText("");
+      setSuggestions([]);
+    }
   };
 
   return (
     <>
-      <nav
-        className={`fixed top-4 left-1/2 transform -translate-x-1/2 w-[95%] md:w-[90%]
+      <nav className={`fixed top-4 left-1/2 transform -translate-x-1/2 w-[95%] md:w-[90%]
         px-6 py-3 z-50 rounded-xl transition-all duration-300
         bg-black/80 backdrop-blur-md shadow-lg flex items-center justify-between
-        ${isScrolled ? "shadow-xl" : "shadow-md"}`}
-      >
+        ${isScrolled ? "shadow-xl" : "shadow-md"}`}>
+        
         {/* Logo */}
         <div className="flex items-center gap-2">
           <img src="/img/logo.png" alt="Logo Sedap" className="h-8 w-8" />
           <span className="text-xl font-bold text-yellow-400">Bloom&Bite</span>
         </div>
 
-        {/* Menu Tengah */}
+        {/* Menu */}
         <ul className="hidden md:flex gap-6 text-white items-center font-medium absolute left-1/2 transform -translate-x-1/2">
           <li><a href="#hero" className="hover:text-yellow-400">Beranda</a></li>
           <li><a href="#about" className="hover:text-yellow-400">Tentang</a></li>
@@ -85,7 +84,7 @@ export default function Navbar({ isScrolled }) {
           <li><a href="#cek-member" className="hover:text-yellow-400">Tim Kami</a></li>
         </ul>
 
-        {/* Search + Auth */}
+        {/* Search + Login */}
         <div className="hidden md:flex items-center gap-4 relative">
           <div className="relative">
             <input
@@ -103,7 +102,7 @@ export default function Navbar({ isScrolled }) {
                     onClick={() => handleSelect(item.id)}
                     className="px-4 py-2 hover:bg-yellow-100 cursor-pointer text-sm border-b"
                   >
-                    {item.title}
+                    {item.nama}
                   </li>
                 ))}
               </ul>
@@ -151,22 +150,16 @@ export default function Navbar({ isScrolled }) {
               ✕
             </button>
             <img
-              src={selectedProduct.thumbnail}
-              alt={selectedProduct.title}
+              src={selectedProduct.gambar}
+              alt={selectedProduct.nama}
               className="rounded-xl mb-4 w-full h-48 object-cover"
             />
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              {selectedProduct.title}
+              {selectedProduct.nama}
             </h2>
-            <p className="text-sm text-gray-600 mb-1">
-              <span className="font-semibold">Kategori:</span> {selectedProduct.category}
-            </p>
-            <p className="text-sm text-gray-600 mb-3">
-              <span className="font-semibold">Brand:</span> {selectedProduct.brand}
-            </p>
-            <p className="text-sm text-gray-700 mb-4">{selectedProduct.description}</p>
+            <p className="text-sm text-gray-700 mb-4">{selectedProduct.deskripsi}</p>
             <p className="text-lg font-bold text-yellow-500">
-              Harga: Rp {Number(selectedProduct.price * 1000).toLocaleString()}
+              Harga: Rp {Number(selectedProduct.harga).toLocaleString()}
             </p>
           </div>
         </div>
