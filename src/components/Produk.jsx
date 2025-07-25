@@ -131,13 +131,13 @@ const Produk = () => {
           <div className="flex justify-between mb-4">
             <button
               onClick={handlePrev}
-              className="bg-yellow-200 hover:bg-yellow-300 text-sm font-semibold px-4 py-2 rounded-lg"
+              className="bg-yellow-500 hover:bg-yellow-700 text-sm font-semibold px-4 py-2 rounded-lg"
             >
               ‹ Sebelumnya
             </button>
             <button
               onClick={handleNext}
-              className="bg-yellow-200 hover:bg-yellow-300 text-sm font-semibold px-4 py-2 rounded-lg"
+              className="bg-yellow-500 hover:bg-yellow-700 text-sm font-semibold px-4 py-2 rounded-lg"
             >
               Selanjutnya ›
             </button>
