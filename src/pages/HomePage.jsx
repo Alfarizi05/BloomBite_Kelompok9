@@ -32,7 +32,7 @@ export default function SedapGuestPage() {
       className="font-sans antialiased min-h-screen bg-cover bg-center bg-no-repeat bg-fixed"
       style={{ backgroundImage: "url('/img/black.jpg')" }}
     >
-      <div className="bg-white-400 bg-opacity-80 min-h-screen" style={{ backgroundImage: "url('/img/black.jpg')" }}>
+      <div className="bg-white-400 bg-opacity-80 min-h-screen">
         <Navbar isScrolled={isScrolled} />
         <main className="pt-28">
           <Hero />
