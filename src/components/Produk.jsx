@@ -15,20 +15,19 @@ const Produk = () => {
   const [message, setMessage] = useState("");
   const [formData, setFormData] = useState({ nama: "", alamat: "", jumlah: 1 });
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      const data = await productAPI.fetchProducts();
-      setProducts(data);
-    } catch (err) {
-      console.error("Error fetching products:", err);
-      setMessage("Gagal mengambil data produk.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await productAPI.fetchProducts();
+        setProducts(data);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setMessage("Gagal mengambil data produk.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchData();
   }, []);
 
@@ -81,7 +80,8 @@ const Produk = () => {
       setMessage("Pesanan berhasil!");
       setSelectedProduct(null);
       setFormData({ nama: "", alamat: "", jumlah: 1 });
-      fetchData();
+      const refreshedProducts = await productAPI.fetchProducts();
+      setProducts(refreshedProducts);
     } catch (err) {
       console.error("Gagal memesan produk:", err);
       setMessage("Gagal memesan produk.");
@@ -100,7 +100,9 @@ const Produk = () => {
 
   return (
     <div className="p-6 max-w-screen-xl mx-auto">
-      <h1 className="text-4xl font-extrabold text-center mb-8 text-yellow-500">Produk Kami</h1>
+      <h1 className="text-4xl font-extrabold text-center mb-8 text-yellow-500">
+        Produk Kami
+      </h1>
 
       {isLoading ? (
         <LoadingSpinner />
@@ -109,8 +111,18 @@ const Produk = () => {
       ) : (
         <>
           <div className="flex justify-between mb-4">
-            <button onClick={handlePrev} className="bg-yellow-200 hover:bg-yellow-300 text-sm font-semibold px-4 py-2 rounded-lg">‹ Sebelumnya</button>
-            <button onClick={handleNext} className="bg-yellow-200 hover:bg-yellow-300 text-sm font-semibold px-4 py-2 rounded-lg">Selanjutnya ›</button>
+            <button
+              onClick={handlePrev}
+              className="bg-yellow-200 hover:bg-yellow-300 text-sm font-semibold px-4 py-2 rounded-lg"
+            >
+              ‹ Sebelumnya
+            </button>
+            <button
+              onClick={handleNext}
+              className="bg-yellow-200 hover:bg-yellow-300 text-sm font-semibold px-4 py-2 rounded-lg"
+            >
+              Selanjutnya ›
+            </button>
           </div>
 
           <div className="relative min-h-[420px]">
@@ -167,25 +179,73 @@ const Produk = () => {
             transition={{ duration: 0.3 }}
             className="bg-white text-black rounded-xl p-6 max-w-md w-full shadow-xl relative"
           >
-            <button onClick={() => setSelectedProduct(null)} className="absolute top-2 right-3 text-gray-600 hover:text-black text-2xl">×</button>
-            <img src={selectedProduct.gambar || "/img/logo.png"} alt={selectedProduct.nama} className="w-full h-48 object-cover rounded mb-4" />
+            <button
+              onClick={() => setSelectedProduct(null)}
+              className="absolute top-2 right-3 text-gray-600 hover:text-black text-2xl"
+            >
+              ×
+            </button>
+            <img
+              src={selectedProduct.gambar || "/img/logo.png"}
+              alt={selectedProduct.nama}
+              className="w-full h-48 object-cover rounded mb-4"
+            />
             <h2 className="text-xl font-bold mb-2">{selectedProduct.nama}</h2>
             <p className="text-gray-700 mb-2 text-sm">{selectedProduct.deskripsi}</p>
-            <p className="text-yellow-500 font-bold">Rp {selectedProduct.harga?.toLocaleString()}</p>
+            <p className="text-yellow-500 font-bold">
+              Rp {selectedProduct.harga?.toLocaleString()}
+            </p>
             <p className="text-sm text-gray-600 mb-3">Stok: {selectedProduct.stok}</p>
 
             <div className="space-y-2 mb-4">
-              <input type="text" name="nama" placeholder="Nama Pemesan" value={formData.nama} onChange={handleInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
-              <input type="text" name="alamat" placeholder="Alamat Pemesan" value={formData.alamat} onChange={handleInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
-              <input type="number" name="jumlah" placeholder="Jumlah" value={formData.jumlah} min={1} max={selectedProduct.stok} onChange={handleInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
+              <input
+                type="text"
+                name="nama"
+                placeholder="Nama Pemesan"
+                value={formData.nama}
+                onChange={handleInputChange}
+                className="w-full border border-gray-300 px-3 py-2 rounded"
+              />
+              <input
+                type="text"
+                name="alamat"
+                placeholder="Alamat Pemesan"
+                value={formData.alamat}
+                onChange={handleInputChange}
+                className="w-full border border-gray-300 px-3 py-2 rounded"
+              />
+              <input
+                type="number"
+                name="jumlah"
+                placeholder="Jumlah"
+                value={formData.jumlah}
+                min={1}
+                max={selectedProduct.stok}
+                onChange={handleInputChange}
+                className="w-full border border-gray-300 px-3 py-2 rounded"
+              />
             </div>
 
             <button
               onClick={handlePesan}
-              disabled={selectedProduct.stok === 0 || isOrdering || !formData.nama || !formData.alamat || formData.jumlah < 1}
-              className={`w-full py-2 rounded font-semibold text-white ${selectedProduct.stok === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-yellow-600 hover:bg-yellow-700"}`}
+              disabled={
+                selectedProduct.stok === 0 ||
+                isOrdering ||
+                !formData.nama ||
+                !formData.alamat ||
+                formData.jumlah < 1
+              }
+              className={`w-full py-2 rounded font-semibold text-white ${
+                selectedProduct.stok === 0
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-yellow-600 hover:bg-yellow-700"
+              }`}
             >
-              {selectedProduct.stok === 0 ? "Stok Habis" : isOrdering ? "Memesan..." : "Pesan"}
+              {selectedProduct.stok === 0
+                ? "Stok Habis"
+                : isOrdering
+                ? "Memesan..."
+                : "Pesan"}
             </button>
           </motion.div>
         </div>
