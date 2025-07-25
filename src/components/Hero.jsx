@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { productAPI } from "../services/productAPI"; // Pastikan path ini benar
 
 export default function Hero() {
   const [randomProducts, setRandomProducts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    fetch("https://dummyjson.com/products?limit=24")
-      .then((res) => res.json())
-      .then((data) => {
-        const shuffled = [...data.products].sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 3);
+    productAPI
+      .fetchProducts()
+      .then((products) => {
+        const shuffled = [...products].sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, 3); // Ambil 3 produk acak
         setRandomProducts(selected);
       })
       .catch((err) => console.error("Gagal memuat produk:", err));
@@ -22,7 +23,6 @@ export default function Hero() {
         prev === randomProducts.length - 1 ? 0 : prev + 1
       );
     }, 4000);
-
     return () => clearInterval(interval);
   }, [randomProducts]);
 
@@ -39,7 +39,7 @@ export default function Hero() {
     >
       <div className="absolute inset-0 bg-[url('/images/bg-pattern.png')] bg-cover opacity-5 pointer-events-none" />
       <div className="relative z-10 flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto">
-        
+
         {/* Kiri (konten teks) */}
         <motion.div
           key={currentIndex + "-text"}
@@ -49,50 +49,50 @@ export default function Hero() {
           transition={{ duration: 0.6 }}
           className="md:w-1/2"
         >
-          <h2 className="text-yellow-400 text-lg font-semibold mb-2 uppercase tracking-wider">
+          <h2 className="text-yellow-400 text-sm font-semibold mb-2 uppercase tracking-wider">
             Promo Spesial
           </h2>
-          <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-white leading-tight mb-3">
             Diskon Hingga 50% <br className="hidden md:block" />
-            Untuk Produk <span className="text-yellow-400">{currentProduct.brand}</span>
+            Untuk Produk <span className="text-yellow-400">{currentProduct.nama}</span>
           </h1>
-          <p className="text-gray-300 text-base mb-6 max-w-md">
-            {currentProduct.description}
+          <p className="text-gray-300 text-sm mb-5 max-w-md">
+            {currentProduct.deskripsi}
           </p>
-          <div className="flex gap-4 mb-6">
-            <button className="bg-yellow-400 text-black px-6 py-3 rounded-lg shadow hover:bg-yellow-500 transition">
+          <div className="flex gap-4 mb-5">
+            <button className="bg-yellow-400 text-black px-5 py-2.5 rounded-lg shadow hover:bg-yellow-500 transition text-sm">
               Lihat Katalog
             </button>
-            <button className="bg-white text-black px-6 py-3 rounded-lg shadow hover:bg-gray-200 transition">
+            <button className="bg-white text-black px-5 py-2.5 rounded-lg shadow hover:bg-gray-200 transition text-sm">
               Cek Promo
             </button>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
-              <img src="/img/google.png" alt="Google" className="w-5 h-5" />
-              <span className="text-yellow-400 font-semibold">4.9</span>
-              <span className="text-sm text-gray-300">Ulasan Google</span>
+              <img src="/img/google.png" alt="Google" className="w-4 h-4" />
+              <span className="text-yellow-400 font-semibold text-sm">4.9</span>
+              <span className="text-xs text-gray-300">Ulasan Google</span>
             </div>
             <div className="flex items-center gap-2">
-              <img src="/img/tokopedia.png" alt="Tokopedia" className="w-5 h-5" />
-              <span className="text-yellow-400 font-semibold">4.8</span>
-              <span className="text-sm text-gray-300">Rating Tokopedia</span>
+              <img src="/img/tokopedia.png" alt="Tokopedia" className="w-4 h-4" />
+              <span className="text-yellow-400 font-semibold text-sm">4.8</span>
+              <span className="text-xs text-gray-300">Rating Tokopedia</span>
             </div>
           </div>
         </motion.div>
 
         {/* Kanan (Gambar produk) */}
-        <div className="md:w-1/2 flex justify-center mb-8 md:mb-0 relative h-[400px]">
+        <div className="md:w-1/2 flex justify-center mb-8 md:mb-0 relative h-[300px]">
           <AnimatePresence mode="wait">
             <motion.img
-              key={currentProduct.thumbnail}
-              src={currentProduct.thumbnail}
-              alt={currentProduct.title}
-              initial={{ opacity: 0, scale: 0.95 }}
+              key={currentProduct.gambar}
+              src={currentProduct.gambar || "/img/logo.png"}
+              alt={currentProduct.nama}
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
               transition={{ duration: 0.6 }}
-              className="w-full max-w-md rounded-xl shadow-xl object-cover absolute"
+              className="w-full max-w-xs rounded-lg shadow-xl object-cover absolute"
             />
           </AnimatePresence>
           <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
