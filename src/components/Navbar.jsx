@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
-import { productAPI } from "../services/productAPI";
-import { bookingAPI } from "../services/bookingAPI";
+import { productAPI } from "../services/productAPI"; // sesuaikan path jika perlu
 
 export default function Navbar({ isScrolled }) {
   const [searchText, setSearchText] = useState("");
@@ -12,15 +11,6 @@ export default function Navbar({ isScrolled }) {
   const [showModal, setShowModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
-
-  const [formData, setFormData] = useState({
-    nama: "",
-    alamat: "",
-    jumlah: 1,
-  });
-
-  const [isOrdering, setIsOrdering] = useState(false);
-  const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -43,12 +33,14 @@ export default function Navbar({ isScrolled }) {
     navigate("/login");
   };
 
+  // Ambil produk dari backend
   useEffect(() => {
     productAPI.fetchProducts()
       .then((data) => setAllProducts(data))
       .catch((err) => console.error("Gagal mengambil produk:", err));
   }, []);
 
+  // Filter berdasarkan pencarian
   useEffect(() => {
     if (searchText.length >= 1) {
       const filtered = allProducts.filter((product) =>
@@ -70,61 +62,20 @@ export default function Navbar({ isScrolled }) {
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handlePesan = async () => {
-    const { nama, alamat, jumlah } = formData;
-    const jumlahInt = parseInt(jumlah);
-
-    if (!selectedProduct || selectedProduct.stok < jumlahInt || jumlahInt <= 0) return;
-    if (!nama || !alamat) {
-      setMessage("Isi semua data terlebih dahulu");
-      return;
-    }
-
-    setIsOrdering(true);
-    try {
-      const updatedStok = selectedProduct.stok - jumlahInt;
-
-      await productAPI.updateProduct(selectedProduct.id, {
-        stok: updatedStok,
-      });
-
-      const bookingData = {
-        nama_pemesan: nama,
-        alamat,
-        jumlah: jumlahInt,
-        product_id: selectedProduct.id,
-      };
-
-      await bookingAPI.createBooking(bookingData);
-
-      setMessage("Pesanan berhasil!");
-      setSelectedProduct(null);
-      setFormData({ nama: "", alamat: "", jumlah: 1 });
-    } catch (err) {
-      console.error("Gagal memesan produk:", err);
-      setMessage("Gagal memesan produk.");
-    } finally {
-      setIsOrdering(false);
-    }
-  };
-
   return (
     <>
       <nav className={`fixed top-4 left-1/2 transform -translate-x-1/2 w-[95%] md:w-[90%]
         px-6 py-3 z-50 rounded-xl transition-all duration-300
         bg-black/80 backdrop-blur-md shadow-lg flex items-center justify-between
         ${isScrolled ? "shadow-xl" : "shadow-md"}`}>
-
+        
+        {/* Logo */}
         <div className="flex items-center gap-2">
           <img src="/img/logo.png" alt="Logo Sedap" className="h-8 w-8" />
           <span className="text-xl font-bold text-yellow-400">Bloom&Bite</span>
         </div>
 
+        {/* Menu */}
         <ul className="hidden md:flex gap-6 text-white items-center font-medium absolute left-1/2 transform -translate-x-1/2">
           <li><a href="#hero" className="hover:text-yellow-400">Beranda</a></li>
           <li><a href="#about" className="hover:text-yellow-400">Tentang</a></li>
@@ -133,6 +84,7 @@ export default function Navbar({ isScrolled }) {
           <li><a href="#cek-member" className="hover:text-yellow-400">Tim Kami</a></li>
         </ul>
 
+        {/* Search + Login */}
         <div className="hidden md:flex items-center gap-4 relative">
           <div className="relative">
             <input
@@ -181,9 +133,10 @@ export default function Navbar({ isScrolled }) {
         </div>
       </nav>
 
+      {/* Modal Produk */}
       {showModal && selectedProduct && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center"
+          className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center"
           onClick={() => setShowModal(false)}
         >
           <div
@@ -204,66 +157,10 @@ export default function Navbar({ isScrolled }) {
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
               {selectedProduct.nama}
             </h2>
-            <p className="text-sm text-gray-700 mb-2">{selectedProduct.deskripsi}</p>
-            <p className="text-lg font-bold text-yellow-500 mb-2">
+            <p className="text-sm text-gray-700 mb-4">{selectedProduct.deskripsi}</p>
+            <p className="text-lg font-bold text-yellow-500">
               Harga: Rp {Number(selectedProduct.harga).toLocaleString()}
             </p>
-            <p className="text-sm text-gray-600 mb-2">Stok: {selectedProduct.stok}</p>
-
-            <div className="space-y-2 mb-4">
-              <input
-                type="text"
-                name="nama"
-                placeholder="Nama Pemesan"
-                value={formData.nama}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 px-3 py-2 rounded"
-              />
-              <input
-                type="text"
-                name="alamat"
-                placeholder="Alamat Pemesan"
-                value={formData.alamat}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 px-3 py-2 rounded"
-              />
-              <input
-                type="number"
-                name="jumlah"
-                placeholder="Jumlah"
-                value={formData.jumlah}
-                min={1}
-                max={selectedProduct.stok}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 px-3 py-2 rounded"
-              />
-            </div>
-
-            <button
-              onClick={handlePesan}
-              disabled={
-                selectedProduct.stok === 0 ||
-                isOrdering ||
-                !formData.nama ||
-                !formData.alamat ||
-                formData.jumlah < 1
-              }
-              className={`w-full py-2 rounded font-semibold text-white ${
-                selectedProduct.stok === 0
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-yellow-500 hover:bg-yellow-700"
-              }`}
-            >
-              {selectedProduct.stok === 0
-                ? "Stok Habis"
-                : isOrdering
-                ? "Memesan..."
-                : "Pesan"}
-            </button>
-
-            {message && (
-              <p className="text-sm text-center mt-2 text-red-500">{message}</p>
-            )}
           </div>
         </div>
       )}

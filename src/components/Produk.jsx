@@ -13,21 +13,27 @@ const Produk = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isOrdering, setIsOrdering] = useState(false);
   const [message, setMessage] = useState("");
-  const [formData, setFormData] = useState({ nama: "", alamat: "", jumlah: 1 });
+  const [formData, setFormData] = useState({
+    nama: "",
+    alamat: "",
+    jumlah: 1,
+  });
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const data = await productAPI.fetchProducts();
+      console.log("Fetched Products:", data); // Debug log
+      setProducts(data);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      setMessage("Gagal mengambil data produk.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await productAPI.fetchProducts();
-        setProducts(data);
-      } catch (err) {
-        console.error("Error fetching products:", err);
-        setMessage("Gagal mengambil data produk.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -37,7 +43,7 @@ const Produk = () => {
     const interval = setInterval(() => {
       setSlideDirection("next");
       setSlideIndex((prev) => (prev + 1) % totalSlides);
-    }, 5000);
+    }, 3000);
     return () => clearInterval(interval);
   }, [totalSlides]);
 
@@ -69,19 +75,24 @@ const Produk = () => {
     setIsOrdering(true);
     try {
       const updatedStok = selectedProduct.stok - jumlahInt;
-      await productAPI.updateProduct(selectedProduct.id, { stok: updatedStok });
-      await bookingAPI.createBooking({
+
+      await productAPI.updateProduct(selectedProduct.id, {
+        stok: updatedStok,
+      });
+
+      const bookingData = {
         nama_pemesan: nama,
         alamat,
         jumlah: jumlahInt,
         product_id: selectedProduct.id,
-      });
+      };
+
+      await bookingAPI.createBooking(bookingData);
 
       setMessage("Pesanan berhasil!");
       setSelectedProduct(null);
       setFormData({ nama: "", alamat: "", jumlah: 1 });
-      const refreshedProducts = await productAPI.fetchProducts();
-      setProducts(refreshedProducts);
+      fetchData();
     } catch (err) {
       console.error("Gagal memesan produk:", err);
       setMessage("Gagal memesan produk.");
@@ -93,81 +104,90 @@ const Produk = () => {
   const displayedProducts = products.slice(slideIndex * 3, slideIndex * 3 + 3);
 
   const slideVariants = {
-    enter: { opacity: 0 },
-    center: { opacity: 1 },
-    exit: { opacity: 0 },
+    enter: (direction) => ({
+      x: direction === "next" ? 200 : -200,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction) => ({
+      x: direction === "next" ? -200 : 200,
+      opacity: 0,
+    }),
   };
 
   return (
     <div className="p-6 max-w-screen-xl mx-auto">
-      <h1 className="text-4xl font-extrabold text-center mb-8 text-yellow-500">
-        Produk Kami
-      </h1>
+      <h1 className="text-4xl font-extrabold text-center mb-8 text-yellow-500">Produk Kami</h1>
 
       {isLoading ? (
         <LoadingSpinner />
       ) : products.length === 0 ? (
         <p className="text-center text-gray-600">Tidak ada produk tersedia.</p>
       ) : (
-        <>
+        <div>
           <div className="flex justify-between mb-4">
             <button
               onClick={handlePrev}
-              className="bg-yellow-200 hover:bg-yellow-300 text-sm font-semibold px-4 py-2 rounded-lg"
+              className="bg-yellow-500 hover:bg-yellow-700 text-sm font-semibold px-4 py-2 rounded-lg"
             >
               ‹ Sebelumnya
             </button>
             <button
               onClick={handleNext}
-              className="bg-yellow-200 hover:bg-yellow-300 text-sm font-semibold px-4 py-2 rounded-lg"
+              className="bg-yellow-500 hover:bg-yellow-700 text-sm font-semibold px-4 py-2 rounded-lg"
             >
               Selanjutnya ›
             </button>
           </div>
 
           <div className="relative min-h-[420px]">
-            <AnimatePresence mode="wait" custom={slideDirection}>
-              <motion.div
-                key={slideIndex}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.4 }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-6 absolute w-full"
-              >
-                {displayedProducts.map((product) => (
-                  <div
-                    key={product.id}
-                    className="bg-white border-2 border-yellow-400 shadow-lg rounded-xl overflow-hidden transition duration-300"
-                  >
-                    <img
-                      src={product.gambar || "/img/logo.png"}
-                      alt={product.nama || "Produk"}
-                      className="w-full h-48 object-cover"
-                      loading="lazy"
-                    />
-                    <div className="p-4 space-y-1">
-                      <h2 className="text-xl font-bold text-gray-800">{product.nama}</h2>
-                      <p className="text-gray-500 text-sm line-clamp-2">{product.deskripsi}</p>
-                      <p className="text-yellow-600 font-semibold text-lg">
-                        Rp {product.harga?.toLocaleString()}
-                      </p>
-                      <p className="text-sm text-gray-400">Stok: {product.stok}</p>
-                      <button
-                        onClick={() => setSelectedProduct(product)}
-                        className="w-full mt-2 py-2 rounded bg-yellow-500 hover:bg-yellow-700 text-white text-sm"
-                        disabled={product.stok === 0}
-                      >
-                        {product.stok === 0 ? "Stok Habis" : "Pesan"}
-                      </button>
+            {displayedProducts.length > 0 && (
+              <AnimatePresence mode="wait" custom={slideDirection}>
+                <motion.div
+                  key={slideIndex}
+                  variants={slideVariants}
+                  custom={slideDirection}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.5 }}
+                  className="grid grid-cols-1 md:grid-cols-3 gap-6 absolute w-full"
+                >
+                  {displayedProducts.map((product) => (
+                    <div
+                      key={product.id}
+                      className="bg-white border border-gray-200 shadow-lg rounded-xl overflow-hidden transform transition duration-300 hover:scale-105"
+                    >
+                      <img
+                        src={product.gambar || "/img/logo.png"}
+                        alt={product.nama || "Produk"}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="p-4 space-y-1">
+                        <h2 className="text-xl font-bold text-gray-800">{product.nama}</h2>
+                        <p className="text-gray-500 text-sm line-clamp-2">{product.deskripsi}</p>
+                        <p className="text-yellow-600 font-semibold text-lg">
+                          Rp {product.harga?.toLocaleString()}
+                        </p>
+                        <p className="text-sm text-gray-400">Stok: {product.stok}</p>
+                        <button
+                          onClick={() => setSelectedProduct(product)}
+                          className="w-full mt-2 py-2 rounded bg-yellow-500 hover:bg-yellow-700 text-white text-sm"
+                          disabled={product.stok === 0}
+                        >
+                          {product.stok === 0 ? "Stok Habis" : "Pesan"}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </motion.div>
-            </AnimatePresence>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            )}
           </div>
-        </>
+        </div>
       )}
 
       {selectedProduct && (
@@ -192,9 +212,7 @@ const Produk = () => {
             />
             <h2 className="text-xl font-bold mb-2">{selectedProduct.nama}</h2>
             <p className="text-gray-700 mb-2 text-sm">{selectedProduct.deskripsi}</p>
-            <p className="text-yellow-500 font-bold">
-              Rp {selectedProduct.harga?.toLocaleString()}
-            </p>
+            <p className="text-yellow-500 font-bold">Rp {selectedProduct.harga?.toLocaleString()}</p>
             <p className="text-sm text-gray-600 mb-3">Stok: {selectedProduct.stok}</p>
 
             <div className="space-y-2 mb-4">
@@ -256,4 +274,4 @@ const Produk = () => {
   );
 };
 
-export default Produk;
+export default Produk;
