@@ -96,7 +96,7 @@ const Produk = () => {
 
   const slideVariants = {
     enter: (direction) => ({
-      x: direction === "next" ? 300 : -300,
+      x: direction === "next" ? 100 : -100,
       opacity: 0,
     }),
     center: {
@@ -104,14 +104,14 @@ const Produk = () => {
       opacity: 1,
     },
     exit: (direction) => ({
-      x: direction === "next" ? -300 : 300,
+      x: direction === "next" ? -100 : 100,
       opacity: 0,
     }),
   };
 
   return (
-    <div className="p-6 max-w-screen-xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">Daftar Produk</h1>
+    <div className="p-4 max-w-screen-xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6 text-center text-yellow-400">Daftar Produk</h1>
 
       {isLoading ? (
         <LoadingSpinner />
@@ -134,7 +134,7 @@ const Produk = () => {
             </button>
           </div>
 
-          <div className="relative h-auto min-h-[300px]">
+          <div className="relative min-h-[320px]">
             <AnimatePresence mode="wait" custom={slideDirection}>
               <motion.div
                 key={slideIndex}
@@ -143,29 +143,30 @@ const Produk = () => {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ duration: 0.5 }}
-                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 absolute w-full"
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 absolute w-full"
               >
                 {displayedProducts.map((product) => (
                   <div
                     key={product.id}
-                    className="bg-white shadow-md rounded-xl overflow-hidden"
+                    className="bg-white border-2 border-gray-300 shadow rounded-xl overflow-hidden transition-transform hover:scale-105"
                   >
                     <img
                       src={product.gambar || "/img/logo.png"}
                       alt={product.nama}
-                      className="w-full h-40 object-cover"
+                      loading="lazy"
+                      className="w-full h-36 object-cover"
                     />
-                    <div className="p-4">
-                      <h2 className="text-lg font-bold">{product.nama}</h2>
-                      <p className="text-gray-700 mb-2 text-sm">{product.deskripsi}</p>
-                      <p className="text-yellow-500 font-bold mb-1 text-sm">
+                    <div className="p-3">
+                      <h2 className="text-base font-semibold">{product.nama}</h2>
+                      <p className="text-gray-600 text-sm mb-1 truncate">{product.deskripsi}</p>
+                      <p className="text-yellow-500 font-bold text-sm">
                         Rp {product.harga?.toLocaleString()}
                       </p>
-                      <p className="text-xs text-gray-600 mb-2">Stok: {product.stok}</p>
+                      <p className="text-xs text-gray-500">Stok: {product.stok}</p>
                       <button
                         onClick={() => setSelectedProduct(product)}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-1.5 rounded text-sm"
+                        className="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white py-1 rounded text-sm"
                         disabled={product.stok === 0}
                       >
                         {product.stok === 0 ? "Stok Habis" : "Pesan"}
@@ -179,14 +180,13 @@ const Produk = () => {
         </div>
       )}
 
-      {/* Modal Pemesanan */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
+            initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ duration: 0.25 }}
             className="bg-white text-black rounded-xl p-6 max-w-md w-full shadow-xl relative"
           >
             <button
@@ -199,15 +199,12 @@ const Produk = () => {
               src={selectedProduct.gambar || "/img/logo.png"}
               alt={selectedProduct.nama}
               className="w-full h-48 object-cover rounded mb-4"
+              loading="lazy"
             />
-            <h2 className="text-2xl font-bold mb-2">{selectedProduct.nama}</h2>
-            <p className="text-gray-800 mt-2 mb-3">{selectedProduct.deskripsi}</p>
-            <p className="text-yellow-500 font-bold text-lg">
-              Harga: Rp {selectedProduct.harga?.toLocaleString()}
-            </p>
-            <p className="text-gray-600 mb-3">
-              Stok tersedia: {selectedProduct.stok}
-            </p>
+            <h2 className="text-xl font-bold mb-2">{selectedProduct.nama}</h2>
+            <p className="text-gray-700 mb-2 text-sm">{selectedProduct.deskripsi}</p>
+            <p className="text-yellow-500 font-bold">Rp {selectedProduct.harga?.toLocaleString()}</p>
+            <p className="text-sm text-gray-600 mb-3">Stok: {selectedProduct.stok}</p>
 
             <div className="space-y-2 mb-4">
               <input

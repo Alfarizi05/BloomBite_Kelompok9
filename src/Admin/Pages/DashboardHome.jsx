@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { productAPI } from "../../services/productAPI";
 import { testimoniAPI } from "../../services/testimoniAPI";
 import { ourTeamAPI } from "../../services/ourTeamAPI";
+import { aboutUsAPI } from "../../services/aboutUsAPI";
+import { bookingAPI } from "../../services/bookingAPI";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import EmptyState from "../../components/EmptyState";
 import {
@@ -16,15 +18,25 @@ import {
   YAxis,
   CartesianGrid,
   Bar,
+  LineChart,
+  Line,
 } from "recharts";
 
 export default function DashboardHome() {
   const [products, setProducts] = useState([]);
   const [testimoni, setTestimoni] = useState([]);
   const [users, setUsers] = useState([]);
+  const [teams, setTeams] = useState([]);
+  const [aboutUs, setAboutUs] = useState([]);
+  const [bookings, setBookings] = useState([]);
+
   const [loadingProduct, setLoadingProduct] = useState(false);
   const [loadingTestimoni, setLoadingTestimoni] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [loadingTeam, setLoadingTeam] = useState(false);
+  const [loadingAbout, setLoadingAbout] = useState(false);
+  const [loadingBooking, setLoadingBooking] = useState(false);
+
   const [error, setError] = useState("");
 
   const loadProducts = async () => {
@@ -66,24 +78,49 @@ export default function DashboardHome() {
   };
 
   const loadTeam = async () => {
-  setLoadingTeam(true);
-  try {
-    const data = await ourTeamAPI.fetchAll();
-    setTeams(data);
-  } catch (err) {
-    setError("Gagal memuat data tim.");
-  } finally {
-    setLoadingTeam(false);
-  }
-};
+    setLoadingTeam(true);
+    try {
+      const data = await ourTeamAPI.fetchAll();
+      setTeams(data);
+    } catch (err) {
+      setError("Gagal memuat data tim.");
+    } finally {
+      setLoadingTeam(false);
+    }
+  };
 
+  const loadAboutUs = async () => {
+    setLoadingAbout(true);
+    try {
+      const data = await aboutUsAPI.fetchAll();
+      setAboutUs(data);
+    } catch (err) {
+      setError("Gagal memuat data About Us.");
+    } finally {
+      setLoadingAbout(false);
+    }
+  };
 
-useEffect(() => {
-  loadProducts();
-  loadTestimoni();
-  loadUsers();
-  loadTeam(); // ← ini
-}, []);
+  const loadBookings = async () => {
+    setLoadingBooking(true);
+    try {
+      const data = await bookingAPI.fetchBookings();
+      setBookings(data);
+    } catch (err) {
+      setError("Gagal memuat data booking.");
+    } finally {
+      setLoadingBooking(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProducts();
+    loadTestimoni();
+    loadUsers();
+    loadTeam();
+    loadAboutUs();
+    loadBookings();
+  }, []);
 
   const userRoleData = [
     { name: "Admin", value: users.filter((u) => u.role === "admin").length },
@@ -102,15 +139,16 @@ useEffect(() => {
     .slice(0, 5)
     .map((p) => ({ name: p.nama, stok: p.stok }));
 
-  const [teams, setTeams] = useState([]);
-  const [loadingTeam, setLoadingTeam] = useState(false);
-
+  const bookingChartData = bookings.map((b) => ({
+    name: b.nama_pemesan,
+    total: b.product_harga * b.jumlah,
+  }));
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-12">
       <h2 className="text-3xl font-bold text-gray-800">Dashboard</h2>
 
-      {/* Statistik Jumlah Admin & User */}
+      {/* Statistik Pengguna */}
       <section className="bg-white p-6 rounded-xl shadow-md space-y-8">
         <h3 className="text-xl font-semibold text-gray-800">Statistik Pengguna</h3>
         {loadingUsers ? (
@@ -154,7 +192,6 @@ useEffect(() => {
           </div>
         )}
       </section>
-      
 
       {/* Perbandingan Stok Produk */}
       <section className="bg-white p-6 rounded-xl shadow-md space-y-8">
@@ -163,7 +200,6 @@ useEffect(() => {
           <LoadingSpinner text="Memuat data stok produk..." />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Produk dengan Stok Terbanyak */}
             <div>
               <h4 className="text-md font-bold text-gray-700 mb-2">Stok Terbanyak</h4>
               <ResponsiveContainer width="100%" height={300}>
@@ -176,8 +212,6 @@ useEffect(() => {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-
-            {/* Produk dengan Stok Tersedikit */}
             <div>
               <h4 className="text-md font-bold text-gray-700 mb-2">Stok Tersedikit</h4>
               <ResponsiveContainer width="100%" height={300}>
@@ -193,27 +227,62 @@ useEffect(() => {
           </div>
         )}
       </section>
-      {/* Our Team */}
-<section>
-  <h3 className="text-2xl font-semibold mb-4 text-gray-700">Tim Kami</h3>
-  {loadingTeam && <LoadingSpinner text="Memuat tim..." />}
-  {!loadingTeam && teams.length === 0 && (
-    <EmptyState text="Belum ada data tim." />
+
+            {/* Chart Booking */}
+      <section className="bg-white p-6 rounded-xl shadow-md">
+        <h3 className="text-xl font-semibold text-gray-800">Total Pembayaran Booking</h3>
+        {loadingBooking ? (
+          <LoadingSpinner text="Memuat data booking..." />
+        ) : bookings.length === 0 ? (
+          <EmptyState text="Belum ada data booking." />
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={bookingChartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="total" stroke="#4f46e5" />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+      </section>
+
+      {/* About Us */}
+     <section>
+  <h3 className="text-2xl font-semibold mb-6 text-center text-gray-700">
+    Tentang Kami
+  </h3>
+  {loadingAbout && <LoadingSpinner text="Memuat data About Us..." />}
+  {!loadingAbout && aboutUs.length === 0 && (
+    <EmptyState text="Belum ada data About Us." />
   )}
-  {!loadingTeam && teams.length > 0 && (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {teams.map((person) => (
+  {!loadingAbout && aboutUs.length > 0 && (
+    <div className="space-y-8">
+      {aboutUs.map((item) => (
         <div
-          key={person.id}
-          className="bg-white border border-gray-100 p-4 rounded-xl shadow hover:shadow-lg transition"
+          key={item.id}
+          className="flex flex-col lg:flex-row items-center justify-between gap-6 bg-white p-6 rounded-xl shadow-md"
         >
-          <img
-            src={person.foto || "/img/profile-placeholder.png"}
-            alt={person.nama}
-            className="w-24 h-24 rounded-full object-cover mx-auto mb-4"
-          />
-          <h4 className="text-lg font-bold text-center text-gray-800">{person.nama}</h4>
-          <p className="text-center text-sm text-gray-600">{person.jabatan}</p>
+          {/* Deskripsi kiri */}
+          <div className="flex-1 text-center lg:text-left">
+            <h4 className="text-xl font-bold text-gray-800 mb-2">
+              {item.title}
+            </h4>
+            <p className="text-gray-600 whitespace-pre-wrap">
+              {item.deskripsi}
+            </p>
+          </div>
+
+          {/* Gambar kanan */}
+          <div className="flex-shrink-0 w-full lg:w-1/3">
+            <img
+              src={item.gambar || "/img/logo.png"}
+              alt={item.title}
+              className="w-full h-48 object-cover rounded-md"
+            />
+          </div>
         </div>
       ))}
     </div>
