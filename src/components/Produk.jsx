@@ -71,7 +71,7 @@ export default function Produk() {
             <div
               key={product.id}
               onClick={() => setSelectedProduct(product)}
-              className="bg-white text-black rounded-lg border-2 border-yellow-400 shadow-lg p-4 text-center hover:scale-105 transition-transform duration-300 cursor-pointer"
+              className="bg-yellow-600 text-black rounded-lg border-2 border-yellow-400 shadow-lg p-4 text-center hover:scale-105 transition-transform duration-300 cursor-pointer"
             >
               <img
                 src={product.gambar || "/img/logo.png"}
@@ -79,7 +79,7 @@ export default function Produk() {
                 className="w-full h-40 object-cover rounded"
               />
               <h3 className="mt-3 font-semibold text-lg">{product.nama}</h3>
-              <p className="text-yellow-500 font-bold mt-1">
+              <p className="text-red-900 font-bold mt-1">
                 Rp {product.harga?.toLocaleString()}
               </p>
             </div>

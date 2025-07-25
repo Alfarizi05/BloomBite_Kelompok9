@@ -20,8 +20,14 @@ const Testimoni = () => {
     loadTestimonials();
   }, []);
 
+  // Fungsi untuk mengambil inisial dari nama
+  const getInitials = (name) => {
+    const words = name.trim().split(" ");
+    if (words.length === 1) return words[0].charAt(0).toUpperCase();
+    return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+  };
+
   return (
-    // 👇 PERUBAHAN DI BARIS INI
     <section id="testimoni" className="py-24 text-center text-white">
       <h2 className="text-4xl font-bold text-yellow-500 mb-12">Our Testimonials</h2>
 
@@ -39,18 +45,18 @@ const Testimoni = () => {
         {testimonials.map((t) => (
           <div
             key={t.id}
-            // Kartu testimoni tetap putih agar konten di dalamnya jelas terbaca
-            className="bg-white text-black w-64 rounded-xl shadow-md py-10 px-6 flex flex-col items-center"
+            className="bg-yellow-600 text-black w-64 rounded-xl shadow-md py-10 px-6 flex flex-col items-center"
           >
-            <div className="w-24 h-24 rounded-full border-4 border-yellow-400 overflow-hidden mb-4">
-              <img
-                src={`https://avatar.iran.liara.run/username?username=${t.nama.replace(/\s/g, "")}`}
-                alt={t.nama}
-                className="w-full h-full object-cover"
-              />
+            {/* Lingkaran inisial */}
+            <div className="w-24 h-24 rounded-full border-4 border-yellow-400 bg-white-950 flex items-center justify-center text-2xl font-bold text-black mb-2">
+              {getInitials(t.nama)}
             </div>
-            <h3 className="text-lg font-bold mb-1">{t.nama}</h3>
-            <p className="text-sm text-gray-700 italic mb-2">{t.pesan}</p>
+
+            {/* Nama lengkap */}
+            <h3 className="text-lg font-semibold mb-2">{t.nama}</h3>
+
+            {/* Pesan dan rating */}
+            <p className="text-sm text-gray-700 italic mb-2 text-center">“{t.pesan}”</p>
             <span className="text-yellow-500 font-semibold">⭐ {t.rating}/5</span>
           </div>
         ))}

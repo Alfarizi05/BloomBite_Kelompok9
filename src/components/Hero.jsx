@@ -39,7 +39,6 @@ export default function Hero() {
     >
       <div className="absolute inset-0 bg-[url('/images/bg-pattern.png')] bg-cover opacity-5 pointer-events-none" />
       <div className="relative z-10 flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto">
-
         {/* Kiri (konten teks) */}
         <motion.div
           key={currentIndex + "-text"}
@@ -54,7 +53,8 @@ export default function Hero() {
           </h2>
           <h1 className="text-3xl md:text-4xl font-bold text-white leading-tight mb-3">
             Diskon Hingga 50% <br className="hidden md:block" />
-            Untuk Produk <span className="text-yellow-400">{currentProduct.nama}</span>
+            Untuk Produk{" "}
+            <span className="text-yellow-400">{currentProduct.nama}</span>
           </h1>
           <p className="text-gray-300 text-sm mb-5 max-w-md">
             {currentProduct.deskripsi}
@@ -74,7 +74,11 @@ export default function Hero() {
               <span className="text-xs text-gray-300">Ulasan Google</span>
             </div>
             <div className="flex items-center gap-2">
-              <img src="/img/tokopedia.png" alt="Tokopedia" className="w-4 h-4" />
+              <img
+                src="/img/tokopedia.png"
+                alt="Tokopedia"
+                className="w-4 h-4"
+              />
               <span className="text-yellow-400 font-semibold text-sm">4.8</span>
               <span className="text-xs text-gray-300">Rating Tokopedia</span>
             </div>
@@ -82,7 +86,8 @@ export default function Hero() {
         </motion.div>
 
         {/* Kanan (Gambar produk) */}
-        <div className="md:w-1/2 flex justify-center mb-8 md:mb-0 relative h-[300px]">
+        {/* Kanan (Gambar produk) */}
+        <div className="md:w-1/2 flex justify-center mb-8 md:mb-0 relative h-[380px]">
           <AnimatePresence mode="wait">
             <motion.img
               key={currentProduct.gambar}
@@ -92,7 +97,7 @@ export default function Hero() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
               transition={{ duration: 0.6 }}
-              className="w-full max-w-xs rounded-lg shadow-xl object-cover absolute"
+              className="w-full max-w-md rounded-xl shadow-xl object-cover absolute"
             />
           </AnimatePresence>
           <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
