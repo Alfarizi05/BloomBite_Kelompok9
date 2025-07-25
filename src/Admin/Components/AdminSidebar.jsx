@@ -67,6 +67,11 @@ export default function AdminSidebar() {
               <span>User</span>
             </Link>
 
+            <Link to="/dashboard/booking" className="flex items-center gap-2 px-4 py-2 rounded hover:bg-gray-700 transition">
+              <FaBox />
+              <span>Booking</span>
+            </Link>
+
             <div className="mt-6 mb-2 text-sm font-bold uppercase text-gray-400 px-4">
               Authentication
             </div>
@@ -90,6 +95,6 @@ export default function AdminSidebar() {
       <div className="p-4">
         <div className="text-sm text-gray-400 text-center">© 2025 Bloom&Bite</div>
       </div>
-    </div>
-  );
+    </div>
+  );
 }

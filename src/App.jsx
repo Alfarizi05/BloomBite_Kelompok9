@@ -19,6 +19,7 @@ const OurTeam = React.lazy(() => import("./Admin/Pages/OurTeam"));
 const TestimoniForm = React.lazy(() => import("./Admin/Pages/TestimoniForm"));
 const UserManagement = React.lazy(() => import("./Admin/Users/UserManagement"));
 const Notes = React.lazy(() => import("./pages/Notes"));
+const BookingAdmin = React.lazy(() => import("./Admin/Pages/BookingAdmin"));
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<DashboardHome />} />
             <Route path="products" element={<Product />} />
+              <Route path="booking" element={<BookingAdmin />} /> 
             <Route path="aboutus" element={<AboutUs />} />
             <Route path="ourteam" element={<OurTeam />} />
             <Route path="testimoniform" element={<TestimoniForm />} />
@@ -69,5 +71,5 @@ export default function App() {
         />
       </Routes>
     </Suspense>
-  );
+  );
 }
