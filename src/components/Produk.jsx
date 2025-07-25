@@ -23,6 +23,7 @@ const Produk = () => {
     setIsLoading(true);
     try {
       const data = await productAPI.fetchProducts();
+      console.log("Fetched Products:", data); // Debug log
       setProducts(data);
     } catch (err) {
       console.error("Error fetching products:", err);
@@ -36,9 +37,8 @@ const Produk = () => {
     fetchData();
   }, []);
 
-  const totalSlides = Math.ceil(products.length / 3);
+  const totalSlides = Math.max(1, Math.ceil(products.length / 3));
 
-  // Auto-slide every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setSlideDirection("next");
@@ -128,7 +128,6 @@ const Produk = () => {
         <p className="text-center text-gray-600">Tidak ada produk tersedia.</p>
       ) : (
         <div>
-          {/* Tombol navigasi tetap */}
           <div className="flex justify-between mb-4">
             <button
               onClick={handlePrev}
@@ -145,47 +144,48 @@ const Produk = () => {
           </div>
 
           <div className="relative min-h-[420px]">
-            <AnimatePresence mode="wait" custom={slideDirection}>
-              <motion.div
-                key={slideIndex}
-                variants={slideVariants}
-                custom={slideDirection}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.5 }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-6 absolute w-full"
-              >
-                {displayedProducts.map((product) => (
-                  <div
-                    key={product.id}
-                    className="bg-white border border-gray-200 shadow-lg rounded-xl overflow-hidden transform transition duration-300 hover:scale-105"
-                  >
-                    <img
-                      src={product.gambar || "/img/logo.png"}
-                      alt={product.nama}
-                      className="w-full h-48 object-cover"
-                      loading="lazy"
-                    />
-                    <div className="p-4 space-y-1">
-                      <h2 className="text-xl font-bold text-gray-800">{product.nama}</h2>
-                      <p className="text-gray-500 text-sm line-clamp-2">{product.deskripsi}</p>
-                      <p className="text-yellow-600 font-semibold text-lg">
-                        Rp {product.harga?.toLocaleString()}
-                      </p>
-                      <p className="text-sm text-gray-400">Stok: {product.stok}</p>
-                      <button
-                        onClick={() => setSelectedProduct(product)}
-                        className="w-full mt-2 py-2 rounded bg-yellow-500 hover:bg-yellow-700 text-white text-sm"
-                        disabled={product.stok === 0}
-                      >
-                        {product.stok === 0 ? "Stok Habis" : "Pesan"}
-                      </button>
+            {displayedProducts.length > 0 && (
+              <AnimatePresence mode="wait" custom={slideDirection}>
+                <motion.div
+                  key={slideIndex}
+                  variants={slideVariants}
+                  custom={slideDirection}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.5 }}
+                  className="grid grid-cols-1 md:grid-cols-3 gap-6 absolute w-full"
+                >
+                  {displayedProducts.map((product) => (
+                    <div
+                      key={product.id}
+                      className="bg-white border border-gray-200 shadow-lg rounded-xl overflow-hidden transform transition duration-300 hover:scale-105"
+                    >
+                      <img
+                        src={product.gambar || "/img/logo.png"}
+                        alt={product.nama || "Produk"}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="p-4 space-y-1">
+                        <h2 className="text-xl font-bold text-gray-800">{product.nama}</h2>
+                        <p className="text-gray-500 text-sm line-clamp-2">{product.deskripsi}</p>
+                        <p className="text-yellow-600 font-semibold text-lg">
+                          Rp {product.harga?.toLocaleString()}
+                        </p>
+                        <p className="text-sm text-gray-400">Stok: {product.stok}</p>
+                        <button
+                          onClick={() => setSelectedProduct(product)}
+                          className="w-full mt-2 py-2 rounded bg-yellow-500 hover:bg-yellow-700 text-white text-sm"
+                          disabled={product.stok === 0}
+                        >
+                          {product.stok === 0 ? "Stok Habis" : "Pesan"}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </motion.div>
-            </AnimatePresence>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            )}
           </div>
         </div>
       )}
@@ -209,7 +209,6 @@ const Produk = () => {
               src={selectedProduct.gambar || "/img/logo.png"}
               alt={selectedProduct.nama}
               className="w-full h-48 object-cover rounded mb-4"
-              loading="lazy"
             />
             <h2 className="text-xl font-bold mb-2">{selectedProduct.nama}</h2>
             <p className="text-gray-700 mb-2 text-sm">{selectedProduct.deskripsi}</p>
