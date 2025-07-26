@@ -1,6 +1,6 @@
 import { ImSpinner2 } from "react-icons/im";
 import { BsFillExclamationDiamondFill } from "react-icons/bs";
-import { FaUser, FaLock, FaLeaf } from "react-icons/fa"; // << Tambahkan icon logo
+import { FaUser, FaLock } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
@@ -53,7 +53,7 @@ export default function Login() {
     <div className="bg-white shadow-lg border border-gray-200 rounded-2xl p-8 grid gap-6">
       {/* Logo */}
       <div className="flex justify-center">
-        <img src="/public/img/logo.png" className="h-30 w-30" />
+        <img src="/img/logo.png" alt="Logo" className="h-24 w-auto" />
       </div>
 
       <h2 className="text-2xl font-bold text-gray-800 text-center">Login Here!</h2>
